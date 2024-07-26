@@ -32,7 +32,7 @@ app.use(fileUpload({
 }));
 
 // Routes
-app.use('/api/v1', userRouter);
+app.use('/api/user/v1', userRouter);
 app.use('/api/v1', applicationRouter);
 app.use('/api/v1', jobRouter);
 

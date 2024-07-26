@@ -1,7 +1,7 @@
 import { catchAsyncErrors } from "../middlewares/catchAyncError.js";
 import { User } from "../models/userModel.js";
 import ErrorHandler from "../middlewares/error.js";
-
+import {sendToken} from "../utils/jwtToken.js"
 export const register = catchAsyncErrors(async (req, res, next) => {
   const { name, email, phone, password, role } = req.body;
 
@@ -21,10 +21,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     password,
     role,
   });
+  sendToken(user,200,res,"USER SUCCESSFULLY RESGISTERED");
 
-  res.status(200).json({
-    success: true,
-    message: "User registered successfully!",
-    user,
-  });
+  
 });
