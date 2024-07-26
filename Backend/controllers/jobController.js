@@ -2,6 +2,7 @@ import { catchAsyncErrors } from "../middlewares/catchAyncError.js";
 import { Job } from "../models/jobSchema.js";
 import ErrorHandler from "../middlewares/error.js";
 
+//Get All Jobs
 export const getAllJobs = catchAsyncErrors(async (req, res, next) => {
   const jobs = await Job.find({ expired: false });
   res.status(200).json({
@@ -10,6 +11,7 @@ export const getAllJobs = catchAsyncErrors(async (req, res, next) => {
   });
 });
  
+//Post Job
 export const postJob = catchAsyncErrors(async (req, res, next) => {
     const { role } = req.user;
     if (role === "Job Seeker") {
@@ -66,7 +68,7 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
       job,
     });
   });
-
+//Get My Jobs
   export const getMyJobs = catchAsyncErrors(async (req, res, next) => {
     const { role } = req.user;
     if (role === "Job Seeker") {
@@ -80,4 +82,26 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
       myJobs,
     });
   });
-  
+  //Update Job
+  export const updateJob = catchAsyncErrors(async (req, res, next) => {
+    const { role } = req.user;
+    if (role === "Job Seeker") {
+      return next(
+        new ErrorHandler("Job Seeker not allowed to access this resource.", 400)
+      );
+    }
+    const { id } = req.params;
+    let job = await Job.findById(id);
+    if (!job) {
+      return next(new ErrorHandler("OOPS! Job not found.", 404));
+    }
+    job = await Job.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    });
+    res.status(200).json({
+      success: true,
+      message: "Job Updated!",
+    });
+  });
